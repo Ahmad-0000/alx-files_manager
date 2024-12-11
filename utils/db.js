@@ -19,13 +19,13 @@ class DBClient {
   async nbUsers() {
     const database = this.client.db(this.dbName);
     const usersColllection = database.collection('users');
-    return await usersColllection.find({}).count(); 
+    return usersColllection.find({}).count();
   }
 
   async nbFiles() {
     const database = this.client.db(this.dbName);
     const filesCollection = database.collection('files');
-    return await filesCollection.find({}).count();
+    return filesCollection.find({}).count();
   }
 }
 
