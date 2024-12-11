@@ -27,6 +27,24 @@ class DBClient {
     const filesCollection = database.collection('files');
     return filesCollection.find({}).count();
   }
+
+  async findUser(attributes, options) {
+    const database = this.client.db(this.dbName);
+    const usersCollection = database.collection('users');
+    if (options) {
+      return usersCollection.findOne(attributes, options);
+    }
+    return usersCollection.findOne(attributes);
+  }
+
+  async newUser(obj) {
+    const database = this.client.db(this.dbName);
+    const usersCollection = database.collection('users');
+    if (await this.findUser(obj)) {
+      return false;
+    }
+    return usersCollection.insert(obj);
+  }
 }
 
 const dbClient = new DBClient();
