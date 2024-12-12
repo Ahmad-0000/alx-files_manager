@@ -1,10 +1,10 @@
-const DBClient = require('../utils/db');
 const crypto = require('crypto');
-const shasum = crypto.createHash('sha1')
+const DBClient = require('../utils/db');
 
 class UsersController {
   static async postNew(req, res) {
     const { email } = req.body;
+    const sha = crypto.createHash('sha1');
     let { password } = req.body;
     if (!email) {
       res.status(400).send({ error: 'Missing email' });
@@ -15,11 +15,13 @@ class UsersController {
     if (await DBClient.findUser({ email })) {
       res.status(400).send({ error: 'Already exist' });
     }
-    shasum.update(password);
-    await DBClient.newUser({ email, password: shasum.digest('hex') });
-    const result = await DBClient.findUser({ email, password }, { password: 0, _id: 1 });
-    res.status(201).send(result);
+    sha.update(password);
+    password = sha.digest('hex');
+    await DBClient.newUser({ email, password });
+    let result = await DBClient.findUser({ email, password }, { password: 0 });
+    result = await result.next();
+    res.status(201).json(result);
   }
 }
 
-module.exports = UserController;
+module.exports = UsersController;

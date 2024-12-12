@@ -32,7 +32,7 @@ class DBClient {
     const database = this.client.db(this.dbName);
     const usersCollection = database.collection('users');
     if (options) {
-      return usersCollection.findOne(attributes, options);
+      return usersCollection.find(attributes).project(options);
     }
     return usersCollection.findOne(attributes);
   }
