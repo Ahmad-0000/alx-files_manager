@@ -2,11 +2,10 @@ const { MongoClient } = require('mongodb');
 
 class DBClient {
   constructor() {
-    this.host = process.env.DB_HOST || 'localhost';
+    this.host = process.env.DB_HOST || '127.0.0.1';
     this.port = process.env.DB_PORT || 27017;
     this.dbName = process.env.DB_DATABASE || 'files_manager';
-    this.client = MongoClient(`mongodb://${this.host}:${this.port} || '27017'`, {
-      useNewUrlParser: true,
+    this.client = MongoClient(`mongodb://${this.host}:${this.port}`, {
       useUnifiedTopology: true,
     });
     this.client.connect();
@@ -32,7 +31,19 @@ class DBClient {
     const database = this.client.db(this.dbName);
     const usersCollection = database.collection('users');
     if (options) {
-      return usersCollection.find(attributes).project(options);
+      return usersCollection.aggregate([
+        {
+          $project: {
+            id: '$_id',
+            email: 1,
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+          },
+        },
+      ]);
     }
     return usersCollection.findOne(attributes);
   }
@@ -43,7 +54,7 @@ class DBClient {
     if (await this.findUser(obj)) {
       return false;
     }
-    return usersCollection.insert(obj);
+    return usersCollection.insertOne(obj);
   }
 }
 
