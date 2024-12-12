@@ -10,10 +10,10 @@ class UsersController {
       res.status(400).send({ error: 'Missing email' });
     }
     if (!password) {
-      res.status(400).send({ error: 'Missing password' });
+      res.status(400).json({ error: 'Missing password' });
     }
     if (await DBClient.findUser({ email })) {
-      res.status(400).send({ error: 'Already exist' });
+      res.status(400).json({ error: 'Already exist' });
     }
     sha.update(password);
     password = sha.digest('hex');
