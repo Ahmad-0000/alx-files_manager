@@ -2,7 +2,7 @@ const DBClient = require('../utils/db');
 const crypto = require('crypto');
 const shasum = crypto.createHash('sha1')
 
-class UserController {
+class UsersController {
   static async postNew(req, res) {
     const { email } = req.body;
     let { password } = req.body;
