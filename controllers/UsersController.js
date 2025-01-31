@@ -23,6 +23,8 @@ class UsersController {
     await DBClient.newUser({ email, password });
     const result = await DBClient.findUser({ email, password }, { password: 0 });
     delete result.password;
+    result.id = result._id;
+    delete result._id;
     res.status(201).json(result);
   }
 }
