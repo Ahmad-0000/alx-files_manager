@@ -7,19 +7,22 @@ class UsersController {
     const sha = crypto.createHash('sha1');
     let { password } = req.body;
     if (!email) {
-      res.status(400).send({ error: 'Missing email' });
+      res.status(400).json({ error: 'Missing email' });
+      return;
     }
     if (!password) {
       res.status(400).json({ error: 'Missing password' });
+      return;
     }
     if (await DBClient.findUser({ email })) {
-      res.status(400).json({ error: 'Already exist' });
+      res.status(400).send({ error: 'Already exist' });
+      return;
     }
     sha.update(password);
     password = sha.digest('hex');
     await DBClient.newUser({ email, password });
-    let result = await DBClient.findUser({ email, password }, { password: 0 });
-    result = await result.next();
+    let result = await DBClient.findUser({ email, password }, { password: 0});
+    delete result.password
     res.status(201).json(result);
   }
 }
