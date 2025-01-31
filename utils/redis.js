@@ -2,8 +2,8 @@ const redis = require('redis');
 const { promisify } = require('util');
 
 class RedisClient {
-  constructor(host = 'localhost', port = 6379) {
-    this.client = redis.createClient({ host, port });
+  constructor() {
+    this.client = redis.createClient();
     this.client.on('error', (error) => console.log(error));
     this.client.ping();
   }
@@ -13,13 +13,13 @@ class RedisClient {
   }
 
   async get(key) {
-    this.client.get = promisify(this.client.get);
-    return this.client.get(key);
+    const promisedGet = promisify(this.client.get).bind(this.client);
+    return promisedGet(key);
   }
 
   async set(key, value, duration) {
-    this.client.set = promisify(this.client.set);
-    return this.client.set(key, value, 'EX', duration);
+    const promisedSet= promisify(this.client.set).bind(this.client);
+    return promisedSet(key, value, 'EX', duration);
   }
 
   async del(key) {
@@ -27,6 +27,6 @@ class RedisClient {
   }
 }
 
-const redisClient = new RedisClient('localhost', 6379);
+const redisClient = new RedisClient();
 
 module.exports = redisClient;
