@@ -31,19 +31,7 @@ class DBClient {
     const database = this.client.db(this.dbName);
     const usersCollection = database.collection('users');
     if (options) {
-      return usersCollection.aggregate([
-        {
-          $project: {
-            id: '$_id',
-            email: 1,
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-          },
-        },
-      ]);
+      return usersCollection.findOne(attributes, options);
     }
     return usersCollection.findOne(attributes);
   }
