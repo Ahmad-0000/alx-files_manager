@@ -21,8 +21,8 @@ class UsersController {
     sha.update(password);
     password = sha.digest('hex');
     await DBClient.newUser({ email, password });
-    let result = await DBClient.findUser({ email, password }, { password: 0});
-    delete result.password
+    const result = await DBClient.findUser({ email, password }, { password: 0 });
+    delete result.password;
     res.status(201).json(result);
   }
 }
